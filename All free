@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UK History Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff; /* Pure white page background */
+            color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-card {
+            background: #ffffff;
+            border: 1px solid #eaeaea;
+            border-radius: 20px;
+            padding: 25px 20px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04); /* Ultra soft shadow */
+        }
+
+        /* Progress Bar Tracker */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 33%;
+            background: linear-gradient(90deg, #0066cc, #0088ff);
+            transition: width 0.3s ease;
+        }
+
+        .badge {
+            background: #f2f4f7;
+            color: #0066cc;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            border: 1px solid #e1e5eb;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #111111;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666666;
+            text-align: center;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            padding: 0 10px;
+        }
+
+        /* Featured Graphic Style */
+        .featured-image-container {
+            width: 100%;
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            border: 1px solid #eaeaea;
+            background: #f9f9f9;
+        }
+
+        .featured-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Question Step Framework */
+        .quiz-step {
+            display: none;
+            text-align: left;
+        }
+
+        .quiz-step.active {
+            display: block;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            line-height: 1.4;
+            color: #111111;
+        }
+
+        /* Styled White Multiple Choice Labels */
+        .options-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-item {
+            background: #ffffff;
+            border: 1px solid #dcdee2;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #333333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .option-item:hover {
+            background: #f8fa9c; /* Highlighting element nudge */
+            border-color: #0066cc;
+        }
+
+        .option-item input[type="radio"] {
+            accent-color: #0066cc;
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Processing HUD Console */
+        .status-box {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 13px;
+            display: none;
+            border: 1px solid #eaeaea;
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #444444;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #e0e0e0;
+            border-top: 2px solid #0066cc;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Main Call To Action Trigger Button */
+        .action-btn {
+            width: 100%;
+            background: #0066cc;
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
+            transition: background 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: #0052a3;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-card">
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div style="text-align: center;">
+            <div class="badge" id="stepBadge">Question 1 of 3</div>
+        </div>
+        <h1>UK History Quiz</h1>
+        <p class="subtitle">Complete the quiz below for your chance to unlock a special reward</p>
+
+        <div class="featured-image-container">
+            <img id="quizImage" src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=500&q=80" alt="Quiz Graphic">
+        </div>
+
+        <div class="quiz-step active" id="step1">
+            <div class="question-text">1. Who was the reigning monarch of the UK during the Victorian Era?</div>
+            <div class="options-stack">
+                <label class="option-item"><input type="radio" name="q1" value="A"> Queen Elizabeth I</label>
+                <label class="option-item"><input type="radio" name="q1" value="B"> Queen Victoria</label>
+                <label class="option-item"><input type="radio" name="q1" value="C"> King George III</label>
+            </div>
+            <button class="action-btn" onclick="goToNextStep(2)">Next Question</button>
+        </div>
+
+        <div class="quiz-step" id="step2">
+            <div class="question-text">2. In which year did the Battle of Hastings take place?</div>
+            <div class="options-stack">
+                <label class="option-item"><input type="radio" name="q2" value="A"> 1066</label>
+                <label class="option-item"><input type="radio" name="q2" value="B"> 1215</label>
+                <label class="option-item"><input type="radio" name="q2" value="C"> 1588</label>
+            </div>
+            <button class="action-btn" onclick="goToNextStep(3)">Next Question</button>
+        </div>
+
+        <div class="quiz-step" id="step3">
+            <div class="question-text">3. Which famous document was signed by King John at Runnymede in 1215?</div>
+            <div class="options-stack">
+                <label class="option-item"><input type="radio" name="q3" value="A"> The Bill of Rights</label>
+                <label class="option-item"><input type="radio" name="q3" value="B"> The Magna Carta</label>
+                <label class="option-item"><input type="radio" name="q3" value="C"> The Declaration of Arbroath</label>
+            </div>
+
+            <div class="status-box" id="statusBox">
+                <div class="status-row">
+                    <div class="spinner" id="loadingSpinner"></div>
+                    <span id="statusText">Evaluating quiz accuracy score...</span>
+                </div>
+            </div>
+
+            <button class="action-btn" id="finalBtn" onclick="finalizeQuizSubmission()">Submit & Claim Reward</button>
+        </div>
+
+    </div>
+
+    <script>
+        function goToNextStep(nextStepNum) {
+            var currentStepNum = nextStepNum - 1;
+            var radioChecked = document.querySelector('input[name="q' + currentStepNum + '"]:checked');
+
+            if (!radio
